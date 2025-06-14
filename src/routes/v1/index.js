@@ -1,5 +1,15 @@
-/**
- * Updated by trungquandev.com's author on August 17 2023
- * YouTube: https://youtube.com/@trungquandev
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
+/**project-dinespot*/
+import express from 'express'
+import { authRoute } from './authRoute'
+
+const Router = express.Router()
+
+Router.get('/health', (req, res) => {
+    res.json({
+        message: 'Ready to use.'
+    })
+})
+
+Router.use('/api/users', authRoute)
+
+export const APIs_v1 = Router

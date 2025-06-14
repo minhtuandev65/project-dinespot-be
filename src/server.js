@@ -1,32 +1,62 @@
-/**
- * Updated by trungquandev.com's author on August 17 2023
- * YouTube: https://youtube.com/@trungquandev
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
-
 import express from 'express'
-import { mapOrder } from '~/utils/sorts.js'
+import cookieParser from 'cookie-parser'
+import { CLOSE_DB, CONNECT_DB } from './config/mongodb'
+import cors from 'cors'
+import exitHook from 'async-exit-hook'
+import { APIs_v1 } from './routes/v1'
+import { errorHandlingMiddleware } from './middlewares/errorHandlingMiddleware'
+import { env } from './config/environment'
+import { corsOptions } from './config/cors'
 
-const app = express()
+const START_SERVER = () => {
+    const app = express()
 
-const hostname = 'localhost'
-const port = 8017
+    app.use((req, res, next) => {
+        res.set('Cache-Control', 'no-store')
+        next()
+    })
 
-app.get('/', (req, res) => {
-  // Test Absolute import mapOrder
-  console.log(mapOrder(
-    [ { id: 'id-1', name: 'One' },
-      { id: 'id-2', name: 'Two' },
-      { id: 'id-3', name: 'Three' },
-      { id: 'id-4', name: 'Four' },
-      { id: 'id-5', name: 'Five' } ],
-    ['id-5', 'id-4', 'id-2', 'id-3', 'id-1'],
-    'id'
-  ))
-  res.end('<h1>Hello World!</h1><hr>')
-})
+    app.use(cookieParser())
 
-app.listen(port, hostname, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Hello Trung Quan Dev, I am running at ${ hostname }:${ port }/`)
-})
+    app.use(express.json())
+    app.use(cors(corsOptions))
+
+    app.use('/v1', APIs_v1)
+
+    app.use(errorHandlingMiddleware)
+
+    if (env.BUILD_MODE === 'production') {
+        app.listen(process.env.PORT, () => {
+            console.log(
+                `3. Production: Hi ${env.AUTHOR}, Back-end Server is running successfully at  Port: ${process.env.PORT}`
+            )
+        })
+    } else {
+        app.listen(env.LOCAL_DEV_APP_PORT, env.LOCAL_DEV_APP_HOST, () => {
+            console.log(
+                `3. Local DEV: Hi ${env.AUTHOR}, Back-end Server is running successfully at Host: ${env.LOCAL_DEV_APP_HOST} and Port: ${env.LOCAL_DEV_APP_PORT}`
+            )
+        })
+    }
+
+    exitHook(() => {
+        console.log('4. Server is shutting down...')
+        CLOSE_DB()
+        console.log('5. Disconnected from MongoDB Cloud Atlas')
+    })
+}
+
+;(async () => {
+    try {
+        console.log('1. Connecting to MongoDB Cloud Atlas...')
+
+        await CONNECT_DB()
+
+        console.log('2. Connected to MongoDB Cloud Atlas!')
+
+        START_SERVER()
+    } catch (error) {
+        console.error(error)
+        process.exit(0)
+    }
+})()
