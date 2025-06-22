@@ -16,7 +16,8 @@ export const APP_LOGO =
 export const ROLE = {
     ADMIN: 'ADMIN',
     USER: 'USER',
-    MANAGER: 'MANAGER'
+    MANAGER: 'MANAGER',
+    STAFF: 'STAFF'
 }
 export const GENDER = {
     MALE: 'MALE',

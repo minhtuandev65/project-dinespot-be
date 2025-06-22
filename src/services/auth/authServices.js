@@ -45,7 +45,7 @@ const createNew = async (reqBody) => {
         username: nameFromEmail,
         displayName: reqBody.displayName,
         verifyToken: uuidv4(),
-        role: [requestedRole]
+        role: requestedRole
     }
 
     const createdUser = await authModel.createNew(newUser)
@@ -137,7 +137,9 @@ const refreshToken = async (clientRefreshToken) => {
 
 const verifyAccount = async (reqBody) => {
     try {
-        const existUser = await authModel.findByEmail(reqBody.email)
+        const emailValue = reqBody.email
+
+        const existUser = await authModel.findByEmail(emailValue)
 
         if (!existUser)
             throw new ApiError(StatusCodes.NOT_FOUND, 'Account not found!')

@@ -42,7 +42,22 @@ const updateOrganization = async (req, res, next) => {
         next(error)
     }
 }
+const addNewStaff = async (req, res, next) => {
+    try {
+        const emailValue = req.body
+        const organizationId = req.params.organizationId
+        const addNewStaff = {
+            emailValue,
+            organizationId
+        }
+        const data = await organizationServices.addNewStaff(addNewStaff)
+        res.status(StatusCodes.CREATED).json(data)
+    } catch (error) {
+        next(error)
+    }
+}
 export const organizationController = {
     createNewOrganization,
-    updateOrganization
+    updateOrganization,
+    addNewStaff
 }
