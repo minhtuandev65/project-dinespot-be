@@ -10,9 +10,9 @@ import { APP_LOGO, ROLE, WEBSITE_DOMAIN } from '~/utils/constants'
 import { ResendProvider } from '~/providers/ResendProvider'
 import dayjs from 'dayjs'
 import ms from 'ms'
-import verifyEmailTemplate from '~/template/verifyEmailTemplate'
-import forgotPasswordTemplate from '~/template/forgotPasswordMailTemplate'
-import passwordResetSuccessTemplate from '~/template/resetPasswordSuccessTemplate'
+import verifyEmailTemplate from '~/template/auth/verifyEmailTemplate'
+import forgotPasswordTemplate from '~/template/auth/forgotPasswordMailTemplate'
+import passwordResetSuccessTemplate from '~/template/auth/resetPasswordSuccessTemplate'
 
 const createNew = async (reqBody) => {
     const existingUser = await authModel.findByEmail(reqBody.email)
@@ -84,7 +84,8 @@ const authenticate = async (reqBody) => {
 
         const userInfo = {
             _id: existUser._id,
-            email: existUser.email
+            email: existUser.email,
+            role: existUser.role
         }
 
         const accessToken = await JwtProvider.generateToken(

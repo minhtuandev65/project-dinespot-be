@@ -18,3 +18,12 @@ export const ROLE = {
     USER: 'USER',
     MANAGER: 'MANAGER'
 }
+export const GENDER = {
+    MALE: 'MALE',
+    FEMALE: 'FEMALE'
+}
+export const ORGIZATION_STATUS = {
+    ACCEPTED: 'ACCEPTED',
+    PENDING: 'PENDING',
+    REJECTED: 'REJECTED'
+}

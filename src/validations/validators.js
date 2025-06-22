@@ -10,3 +10,4 @@ export const PASSWORD_RULE_MESSAGE =
 // Liên quan đến Validate File
 export const LIMIT_COMMON_FILE_SIZE = 10485760 // byte = 10 MB
 export const ALLOW_COMMON_FILE_TYPES = ['image/jpg', 'image/jpeg', 'image/png']
+export const PHONE_RULE = /^[0-9]{10,15}$/
