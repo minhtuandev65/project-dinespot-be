@@ -91,10 +91,7 @@ const forgotPassword = async (req, res, next) => {
             email: req.body.email
         })
 
-        res.status(StatusCodes.OK).json({
-            message: 'Check your mail box to reset your password',
-            result
-        })
+        res.status(StatusCodes.OK).json(result)
     } catch (error) {
         next(error)
     }
@@ -129,7 +126,7 @@ const getMyProfile = async (req, res, next) => {
 
         const resultArray = await userService.getMyProfile(userId)
         const result = resultArray[0]
-        const { _id, email, verifyToken, isActive, _destroy, ...data } = result
+        const { _id, verifyToken, _destroy, ...data } = result
         res.status(StatusCodes.OK).json(data)
     } catch (error) {
         next(error)
