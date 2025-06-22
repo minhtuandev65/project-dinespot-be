@@ -14,6 +14,12 @@ const ORG_COLLECTION_SCHEMA = Joi.object({
         .required()
         .pattern(OBJECT_ID_RULE)
         .message(OBJECT_ID_RULE_MESSAGE),
+    staffIds: Joi.array()
+        .items(
+            Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+        )
+        .default([])
+        .label('List staff'),
     name: Joi.string().required().min(3).max(100).label('Orgization name'),
     description: Joi.string().max(500).optional().label('Desciption'),
     logoURL: Joi.string().uri().optional().label('URL logo'),
@@ -63,9 +69,28 @@ const createNewOrganization = async (newOrganization) => {
         throw new Error(error)
     }
 }
+const createNewStaffOrganization = async ({ userId, organizationId }) => {
+    try {
+        const exist = await GET_DB()
+            .collection(ORG_COLLECTION_NAME)
+            .findOneAndUpdate(
+                { _id: new ObjectId(organizationId), _destroy: false },
+                {
+                    $set: {
+                        staffIds: new ObjectId(userId),
+                        updatedAt: new Date()
+                    }
+                },
+                { returnDocument: 'after' }
+            )
+        return exist
+    } catch (error) {
+        throw new Error(error)
+    }
+}
 const findOrganizationById = async (organizationId) => {
     try {
-        const exist = GET_DB()
+        const exist = await GET_DB()
             .collection(ORG_COLLECTION_NAME)
             .findOne({ _id: new ObjectId(organizationId) })
         return exist
@@ -95,5 +120,6 @@ const updateOrganization = async ({ organizationId, newUpdateData }) => {
 export const organizationModel = {
     findOrganizationById,
     createNewOrganization,
-    updateOrganization
+    updateOrganization,
+    createNewStaffOrganization
 }

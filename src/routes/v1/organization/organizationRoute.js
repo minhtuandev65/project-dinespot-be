@@ -15,6 +15,11 @@ Router.route('/createNew').post(
     multerUploadMiddleware.upload.single('logo'),
     organizationController.createNewOrganization
 )
+Router.route('/:organizationId/addStaff').post(
+    isAuthorized,
+    hasRole(ROLE.MANAGER),
+    organizationController.addNewStaff
+)
 Router.route('/:organizationId/update').put(
     isAuthorized,
     hasRole(ROLE.MANAGER),

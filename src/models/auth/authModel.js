@@ -24,14 +24,14 @@ const USER_COLLECTION_SCHEMA = Joi.object({
     // username cắt ra từ email sẽ có khả năng không unique bởi vì sẽ có những tên email trùng nhau nhưng từ các nhà cung cấp khác nhau
     username: Joi.string().required().trim().strict(),
     displayName: Joi.string().required().trim().strict(),
-    role: Joi.array()
-        .items(Joi.string().valid(...Object.values(ROLE)))
-        .default([ROLE.USER]),
-    phone: Joi.string().required().pattern(PHONE_RULE).label('Contact Phone'),
+    role: Joi.string()
+        .valid(...Object.values(ROLE))
+        .default(ROLE.USER),
+    phone: Joi.string().pattern(PHONE_RULE).label('Contact Phone'),
     avatar: Joi.string().default(env.DEFAULT_AVATAR),
     gender: Joi.string()
         .valid(...Object.values(GENDER))
-        .default([GENDER.MALE]),
+        .default(GENDER.MALE),
     isActive: Joi.boolean().default(false),
     verifyToken: Joi.string(),
     createdAt: Joi.date().timestamp('javascript').default(Date.now),
@@ -90,9 +90,7 @@ const pushNewRole = async (userId, role) => {
                     _id: new ObjectId(userId)
                 },
                 {
-                    $addToSet: {
-                        role: role
-                    }
+                    $set: { role: role }
                 }
             )
     } catch (error) {

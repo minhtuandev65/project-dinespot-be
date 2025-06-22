@@ -11,6 +11,7 @@ import { ResendProvider } from '~/providers/ResendProvider'
 import organizationCreateNewTemplate from '~/template/organization/organizationCreateNewTemplate'
 import organizationUpdateTemplate from '~/template/organization/organizationUpdateTemplate'
 import ApiError from '~/utils/ApiError'
+import { ROLE } from '~/utils/constants'
 
 const createNewOrganization = async (newOrganizationData) => {
     try {
@@ -116,7 +117,29 @@ const updateOrganization = async ({ userId, organizationData }) => {
         throw Error(error)
     }
 }
+const addNewStaff = async (addNewStaff) => {
+    try {
+        const { organizationId, emailValue } = addNewStaff
+        const existUser = await authModel.findByEmail(emailValue.email)
+        if (!existUser)
+            throw new ApiError(StatusCodes.NOT_FOUND, 'Email not found!')
+        if (!existUser.email)
+            throw new ApiError(StatusCodes.NOT_ACCEPTABLE, 'Email not activate')
+        const userId = existUser._id
+        await authModel.pushNewRole(userId, ROLE.STAFF)
+        console.log('userId', userId)
+        console.log('orgId', organizationId)
+        const result = await organizationModel.createNewStaffOrganization({
+            userId,
+            organizationId
+        })
+        return result
+    } catch (error) {
+        throw Error(error)
+    }
+}
 export const organizationServices = {
     createNewOrganization,
-    updateOrganization
+    updateOrganization,
+    addNewStaff
 }
